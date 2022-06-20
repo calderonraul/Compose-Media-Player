@@ -24,7 +24,7 @@ class SongsRepositoryImpl(private val dao: SongsDao) : SongsRepository {
             artist = "Artist 1",
             album = "Album 1",
             duration = "00:00:00",
-            url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            url ="https://storage.googleapis.com/exoplayer-test-media-0/play.mp3",
             artworkUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
         )
         val song2 = Song(
@@ -33,7 +33,7 @@ class SongsRepositoryImpl(private val dao: SongsDao) : SongsRepository {
             artist = "Artist 2",
             album = "Album 2",
             duration = "00:00:00",
-            url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            url = "https://storage.googleapis.com/exoplayer-test-media-0/play.mp3",
             artworkUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
         )
         val song3 = Song(
@@ -42,11 +42,29 @@ class SongsRepositoryImpl(private val dao: SongsDao) : SongsRepository {
             artist = "Artist 3",
             album = "Album 3",
             duration = "00:00:00",
-            url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            url = "https://storage.googleapis.com/exoplayer-test-media-0/play.mp3",
+            artworkUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+        )
+        val song4 = Song(
+            id = 4,
+            title = "Song 4",
+            artist = "Artist 4",
+            album = "Album 4",
+            duration = "00:00:00",
+            url = "https://storage.googleapis.com/exoplayer-test-media-0/play.mp3",
+            artworkUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
+        )
+        val song5=Song(
+            id = 4,
+            title = "Song 4",
+            artist = "Artist 4",
+            album = "Album 4",
+            duration = "00:00:00",
+            url = "https://storage.googleapis.com/exoplayer-test-media-0/play.mp3",
             artworkUrl = "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
         )
 
-        val listOfSongs = listOf(song1, song2, song3)
+        val listOfSongs = listOf(song1, song2, song3,song4,song5)
 
         //go trough the list and insert each song into the database
         for (song in listOfSongs) {

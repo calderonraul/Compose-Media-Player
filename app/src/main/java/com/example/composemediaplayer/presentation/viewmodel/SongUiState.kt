@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 data class SongUiState(
     val songsFLow:StateFlow<List<Song>>,
+    val songFlow:StateFlow<Song>,
     val numberValue:StateFlow<Int>,
     val onNumberValueChanged: (Int) -> Unit,
     val fetchSongs: () -> Unit,

@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SongsDao {
     @Query("SELECT * FROM songs_table")
-    suspend fun getAllSongsFromRoom(): Flow<List<Song>>
+    fun getAllSongsFromRoom(): Flow<List<Song>>
 
     @Query("SELECT * FROM songs_table WHERE id = :id")
-    suspend fun getSongByIdFromRoom(id: Int): Flow<Song>
+    fun getSongByIdFromRoom(id: Int): Flow<Song>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSongToRoom(song: Song)
+    fun insertSongToRoom(song: Song)
 
     @Query("DELETE FROM songs_table")
-    suspend fun deleteAllSongsFromRoom()
+    fun deleteAllSongsFromRoom()
 
 
 }

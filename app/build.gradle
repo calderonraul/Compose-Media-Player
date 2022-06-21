@@ -50,11 +50,14 @@ android {
 dependencies {
 
     implementation "com.google.dagger:hilt-android:2.41"
+    implementation 'androidx.lifecycle:lifecycle-service:2.4.1'
     kapt "com.google.dagger:hilt-compiler:2.41"
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "com.google.accompanist:accompanist-permissions:0.12.0"
 
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.17.0'
     implementation("io.coil-kt:coil-compose:2.1.0")
     implementation "com.google.android.exoplayer:exoplayer:2.17.1"
     implementation 'androidx.core:core-ktx:1.7.0'

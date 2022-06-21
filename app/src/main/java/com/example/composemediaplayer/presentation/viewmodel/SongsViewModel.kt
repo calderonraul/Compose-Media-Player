@@ -1,75 +1,171 @@
 package com.example.composemediaplayer.presentation.viewmodel
 
-import android.util.Log
+import android.support.v4.media.MediaBrowserCompat
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.composemediaplayer.data.model.Song
-import com.example.composemediaplayer.domain.SongsRepository
+import com.example.composemediaplayer.data.model.Audio
+import com.example.composemediaplayer.data.repository.AudioRepository
+import com.example.composemediaplayer.media.constants.K
+import com.example.composemediaplayer.media.exoplayer.MediaPlayerServiceConnection
+import com.example.composemediaplayer.media.service.MediaPlayerService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import hoods.com.audioplayer.media.exoplayer.currentPosition
+import hoods.com.audioplayer.media.exoplayer.isPlaying
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SongsViewModel @Inject constructor(private val songsRepository: SongsRepository) :
+class SongsViewModel @Inject constructor(
+    private val repository: AudioRepository,
+    serviceConnection: MediaPlayerServiceConnection
+) :
     ViewModel() {
+    var audioList = mutableStateListOf<Audio>()
+    val currentPlayingAudio = serviceConnection.currentPlayingAudio
+    private val isConnected = serviceConnection.isConnected
+    lateinit var rootMediaId: String
+    var currentPlayBackPosition by mutableStateOf(0L)
+    private var updatePosition = true
+    private val playbackState = serviceConnection.plaBackState
+    val isAudioPlaying: Boolean
+        get() = playbackState.value?.isPlaying == true
+    private val subscriptionCallback = object
+        : MediaBrowserCompat.SubscriptionCallback() {
+        override fun onChildrenLoaded(
+            parentId: String,
+            children: MutableList<MediaBrowserCompat.MediaItem>
+        ) {
+            super.onChildrenLoaded(parentId, children)
+        }
+    }
+    private val serviceConnection = serviceConnection.also {
+        updatePlayBack()
+    }
 
-    private val songsData: MutableStateFlow<List<Song>> = MutableStateFlow(emptyList())
-    private val numberValueFlow: MutableStateFlow<Int> = MutableStateFlow(1)
-    private val songData: MutableStateFlow<Song> =
-        MutableStateFlow(
-            Song(
-                album = "",
-                artist = "",
-                title = "",
-                duration = "",
-                url = "",
-                artworkUrl = "",
-                id = 0
-            )
-        )
+    val currentDuration: Long
+        get() = MediaPlayerService.currentDuration
 
-
+    var currentAudioProgress = mutableStateOf(0f)
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            songsRepository.initSongs()
-            Log.wtf("SongsViewModel", "initSongs")
+        viewModelScope.launch {
+            audioList += getAndFormatAudioData()
+            isConnected.collect {
+                if (it) {
+                    rootMediaId = serviceConnection.rootMediaId
+                    serviceConnection.plaBackState.value?.apply {
+                        currentPlayBackPosition = position
+                    }
+                    serviceConnection.subscribe(rootMediaId, subscriptionCallback)
 
-        }
-    }
+                }
 
-    private fun getSongs() {
-        viewModelScope.launch(Dispatchers.IO) {
-            songsRepository.getSongs().collect {
-                songsData.value = it
             }
+
+
         }
+
+
     }
 
-    private fun getSongById() {
-        viewModelScope.launch(Dispatchers.IO) {
-            songsRepository.playSong(numberValueFlow.value).collect {
-                songData.value = it
-                Log.wtf("songData", songData.value.toString())
+    private suspend fun getAndFormatAudioData(): List<Audio> {
+        return repository.getAudioData().map {
+            val displayName = it.displayName.substringBefore(".")
+            val artist = if (it.artist.contains("<unknown>"))
+                "Unknown Artist" else it.artist
+            it.copy(
+                displayName = displayName,
+                artist = artist
+
+            )
+        }
+
+
+    }
+
+    fun playAudio(currentAudio: Audio) {
+        serviceConnection.playAudio(audioList)
+        if (currentAudio.id == currentPlayingAudio.value?.id) {
+            if (isAudioPlaying) {
+                serviceConnection.transportControl.pause()
+            } else {
+                serviceConnection.transportControl.play()
             }
+
+
+        } else {
+            serviceConnection.transportControl
+                .playFromMediaId(
+                    currentAudio.id.toString(),
+                    null
+                )
         }
+
+
     }
 
-    private fun onNumberChanged(number: Int) {
-        numberValueFlow.value = number
+    fun stopPlayBack() {
+        serviceConnection.transportControl.stop()
     }
 
+    fun fastForward() {
+        serviceConnection.fastForward()
+    }
 
-    val registerState = SongUiState(
-        songsFLow = songsData,
-        numberValue = numberValueFlow,
-        onNumberValueChanged = ::onNumberChanged,
-        fetchOneSong = ::getSongById,
-        fetchSongs = ::getSongs,
-        songFlow = songData
-    )
+    fun rewind() {
+        serviceConnection.rewind()
+    }
+
+    fun skipToNext() {
+        serviceConnection.skipToNext()
+    }
+
+    fun seekTo(value: Float) {
+        serviceConnection.transportControl.seekTo(
+            (currentDuration * value / 100f).toLong()
+        )
+    }
+
+    private fun updatePlayBack() {
+        viewModelScope.launch {
+            val position = playbackState.value?.currentPosition ?: 0
+
+            if (currentPlayBackPosition != position) {
+                currentPlayBackPosition = position
+            }
+
+            if (currentDuration > 0) {
+                currentAudioProgress.value = (
+                        currentPlayBackPosition.toFloat()
+                                / currentDuration.toFloat() * 100f
+
+                        )
+            }
+
+            delay(K.PLAYBACK_UPDATE_INTERVAL)
+            if (updatePosition) {
+                updatePlayBack()
+            }
+
+
+        }
+
+
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        serviceConnection.unSubscribe(
+            K.MEDIA_ROOT_ID,
+            object : MediaBrowserCompat.SubscriptionCallback() {}
+        )
+        updatePosition = false
+    }
 
 
 }

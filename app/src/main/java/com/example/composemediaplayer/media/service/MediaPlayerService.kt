@@ -44,8 +44,11 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
 
+
+    //Media session is use to control music sesion and we connected to the exo player
     private lateinit var mediaSession: MediaSessionCompat
 
+    //Bridge
     private lateinit var mediaSessionConnector: MediaSessionConnector
 
     private lateinit var mediaPlayerNotificationManager: MediaPlayerNotificationManager
@@ -61,6 +64,7 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
 
     }
 
+    //initialize the whole service
     override fun onCreate() {
         super.onCreate()
         val sessionActivityIntent = packageManager
@@ -199,6 +203,7 @@ class MediaPlayerService : MediaBrowserServiceCompat() {
             notification: Notification,
             ongoing: Boolean
         ) {
+            //Start foreground service andd the notification
             if (ongoing && !isForegroundService) {
                 ContextCompat.startForegroundService(
                     applicationContext,

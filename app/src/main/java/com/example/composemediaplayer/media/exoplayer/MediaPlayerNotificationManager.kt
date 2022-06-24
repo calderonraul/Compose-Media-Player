@@ -10,24 +10,28 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.example.composemediaplayer.media.constants.K
 
+//Class used to control notifications via media session
+
 internal class MediaPlayerNotificationManager(
     context: Context,
     sessionToken: MediaSessionCompat.Token,
     notificationListener: PlayerNotificationManager.NotificationListener
 ) {
 
+
     private val notificationManager: PlayerNotificationManager
 
     init {
         val mediaController = MediaControllerCompat(context, sessionToken)
 
+        //create the notification
         val builder = PlayerNotificationManager.Builder(
             context,
             K.PLAYBACK_NOTIFICATION_ID,
             K.PLAYBACK_NOTIFICATION_CHANNEL_ID
         )
 
-
+        //set the notification texts
         with(builder) {
             setMediaDescriptionAdapter(DescriptionAdapter(mediaController))
             setNotificationListener(notificationListener)
@@ -47,7 +51,6 @@ internal class MediaPlayerNotificationManager(
 
     }
 
-
     fun hideNotification(){
         notificationManager.setPlayer(null)
     }
@@ -55,23 +58,6 @@ internal class MediaPlayerNotificationManager(
     fun showNotification(player: Player){
         notificationManager.setPlayer(player)
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     inner class
     DescriptionAdapter(private val controller: MediaControllerCompat) :

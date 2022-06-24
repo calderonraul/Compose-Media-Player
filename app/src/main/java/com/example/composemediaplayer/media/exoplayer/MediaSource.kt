@@ -66,6 +66,8 @@ class MediaSource
 
     }
 
+
+    //map the media to a media source in order to use with exoplayer
     fun asMediaSource(dataSource: CacheDataSource.Factory):
             ConcatenatingMediaSource {
         val concatenatingMediaSource = ConcatenatingMediaSource()

@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.composemediaplayer.data.model.Audio
 import dagger.hilt.android.qualifiers.ApplicationContext
 import com.example.composemediaplayer.media.constants.K
-import hoods.com.audioplayer.media.exoplayer.currentPosition
 import com.example.composemediaplayer.media.service.MediaPlayerService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -45,6 +45,11 @@ fun HomeScreen(
         else BottomSheetScaffoldDefaults.SheetPeekHeight
     )
 
+
+    TopAppBar {
+        Text(text = "Set Alarm!")
+
+    }
     BottomSheetScaffold(
         sheetContent = {
             currentPlayingAudio?.let { currentPlayingAudio ->

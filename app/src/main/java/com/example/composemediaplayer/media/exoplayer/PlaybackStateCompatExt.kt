@@ -1,4 +1,4 @@
-package hoods.com.audioplayer.media.exoplayer
+package com.example.composemediaplayer.media.exoplayer
 
 import android.os.SystemClock
 import android.support.v4.media.session.PlaybackStateCompat

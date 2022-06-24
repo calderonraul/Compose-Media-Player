@@ -13,8 +13,8 @@ import com.example.composemediaplayer.media.constants.K
 import com.example.composemediaplayer.media.exoplayer.MediaPlayerServiceConnection
 import com.example.composemediaplayer.media.service.MediaPlayerService
 import dagger.hilt.android.lifecycle.HiltViewModel
-import hoods.com.audioplayer.media.exoplayer.currentPosition
-import hoods.com.audioplayer.media.exoplayer.isPlaying
+import com.example.composemediaplayer.media.exoplayer.currentPosition
+import com.example.composemediaplayer.media.exoplayer.isPlaying
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -84,7 +84,6 @@ class SongsViewModel @Inject constructor(
 
             )
         }
-
 
     }
 
